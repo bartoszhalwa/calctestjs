@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=1.0, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="node_modules/@mdi/font/css/materialdesignicons.min.css">
+	<link rel="stylesheet" href="css/main.css">
+
+	<title>Calculator</title>
+</head>
+
+<body>
+	<div class="calculator">
+		<p class="display"></p>
+		<div class="keys">
+			<button id="k0">0</button>
+			<button id="k1">1</button>
+			<button id="k2">2</button>
+			<button id="k3">3</button>
+			<button id="k4">4</button>
+			<button id="k5">5</button>
+			<button id="k6">6</button>
+			<button id="k7">7</button>
+			<button id="k8">8</button>
+			<button id="k9">9</button>
+			<button id="kdel"><span class="mdi mdi-backspace-outline"></span></button>
+			<button id="kac">AC</button>
+			<button id="kadd" val="+"><span class="mdi mdi-plus"></span></button>
+			<button id="ksub" val="-"><span class="mdi mdi-minus"></span></button>
+			<button id="kmp" val="*"><span class="mdi mdi-close"></span></button>
+			<button id="kdiv" val="/"><span class="mdi mdi-slash-forward"></span></button>
+			<button id="keq"><span class="mdi mdi-equal"></span></button>
+			<button id="kcom">.</button>
+		</div>
+	</div>
+
+	<script>
+		const $ = require("jquery")
+		const jQuery = $
+		// require("./node_modules/jquery-color-animation/jquery.animate-colors-min.js")
+	</script>
+	<!-- <script src="./node_modules/jquery/dist/jquery.min.js"></script> -->
+	<script src="./node_modules/jquery-color-animation/jquery.animate-colors-min.js"></script>
+
+	<script>
+		// const $ = require('jquery');
+
+		var op = ""
+
+		$("[id]").each(function () {
+			$(this).css("grid-area", $(this).attr("id"))
+		})
+
+		$("button").click(function () {
+			display(this)
+			$(this).animate({
+				width: "90%",
+				height: "90%"
+			}, "fast").animate({
+				width: "100%",
+				height: "100%"
+			}, "fast")
+		})
+
+		/**
+		 * @param {Element} e Element for function
+		 */
+		
+		function display (e) {
+			let display = $(".display")
+			display.animate({
+				backgroundColor: "white",
+				color: "black"
+			}, "fast")
+			// let text = display.html()
+			let text = ""
+			
+			let el = $(e)
+
+			let key = el.attr("id")
+
+			switch (key) {
+				case "kac":
+					// text = ""
+					op = ""
+					break;
+				case "kdel":
+					// text = text.substr(0, text.length - 1)
+					op = op.toString().substr(0, op.length - 1)
+					break;
+				case "keq":
+					try {
+						op = eval(op)
+					} catch (e) {
+						display.animate({
+							backgroundColor: "#d30000",
+							color: "white"
+						}, 100)
+					}
+					// text = op
+					break;
+				default:
+					if (el.attr("val") != undefined) {
+						// el.find("span.mdi").attr("val", el.attr("val"))
+						op += el.attr("val")
+					} else {
+						op += el.text()
+					}
+					// text += el.html()
+					break;
+			}
+
+			try {
+				$.each(op.toString().split(""), function (k, v) {
+					if ( $(`[val="${v}"]`)[0] != undefined) {
+						text += $(`[val="${v}"]`).html()
+					} else {
+						text += v
+					}
+				})
+			} catch {
+				op = ""
+				display.animate({
+					backgroundColor: "#d30000",
+					color: "white"
+				}, 100)
+			}
+
+			display.html(text)
+		}
+
+		function test(e) {
+			try {
+				$(`#k${e.key}`)[0]
+				return true
+			} catch {
+				return false
+			}
+		}
+
+		$(document).keydown(function(e) {
+			if (test(e)) {
+				if ($(`#k${e.key}`)[0] != undefined) {
+					console.log("ok: " + e.key)
+					$(`#k${e.key}`).trigger("click")
+				} else {
+					console.log("undef: " + e.key)
+					switch (e.key) {
+						case "*":
+							$("#kmp").trigger("click")
+							break;
+
+						case "+":
+							$("#kadd").trigger("click")
+							break;
+
+						case "-":
+							$("#ksub").trigger("click")
+							break;
+
+						case "Backspace":
+							$("#kdel").trigger("click")
+							break;
+
+						case "Enter":
+							$("#keq").trigger("click")
+							break;
+						
+						case "Delete":
+							$("#kac").trigger("click")
+							break;
+					}
+				}
+			} else {
+				console.log("err: " + e.key)
+				switch (e.key) {
+					case "/":
+						$("#kdiv").trigger("click")
+						break;
+
+					case "=":
+						$("#keq").trigger("click")
+						break;
+
+					case ".":
+					case ",":
+						$("#kcom").trigger("click")
+						break;
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>
